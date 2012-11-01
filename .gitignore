@@ -1,0 +1,9 @@
+META.yml
+*.tar.gz
+blib
+Makefile
+inc
+pm_to_blib
+*~
+MANIFEST
+*.bak

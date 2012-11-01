@@ -1,0 +1,27 @@
+This is Perl module WebService::ImodeDotNet.
+
+INSTALLATION
+
+WebService::ImodeDotNet installation is straightforward. If your CPAN shell is set up,
+you should just be able to do
+
+    % cpan WebService::ImodeDotNet
+
+Download it, unpack it, then build it as per the usual:
+
+    % perl Makefile.PL
+    % make && make test
+
+Then install it:
+
+    % make install
+
+DOCUMENTATION
+
+WebService::ImodeDotNet documentation is available as in POD. So you can do:
+
+    % perldoc WebService::ImodeDotNet
+
+to read the documentation online with your favorite pager.
+
+Yoshiki Kurihara
