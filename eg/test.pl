@@ -19,17 +19,14 @@ my $service = WebService::ImodeDotNet->new(
     password  => $config->{ password },
 );
 $service->login;
-my $folder_of = $service->get_folders;
-
-my $folder = $folder_of->{ 0 };
-my $mail_id = $folder->mail_id_list->[ $ARGV[0] ];
-
-my $mail = $service->get_mail_detail( $folder->id, $mail_id );
-for my $a ( @{ $mail->attachments } ) {
-    my $data = $service->get_attachment_file( $a );
-    open my $fh, '> /tmp/' . $a->name or die;
-    print $fh $data;
-    close $fh;
+#$service->get_folders;
+while (1) {
+    warn 'check...';
+    $service->check_new_mail;
+    sleep( 30 );
 }
 
-
+#my $folder = $folder_of->{ 0 };
+#my $mail_id = $folder->mail_id_list->[ $ARGV[0] ];
+#my $mail = $service->get_mail_detail( $folder->id, $mail_id );
+#warn Dumper $mail;
