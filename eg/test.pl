@@ -19,12 +19,12 @@ my $service = WebService::ImodeDotNet->new(
     password  => $config->{ password },
 );
 $service->login;
-#$service->get_folders;
-while (1) {
-    warn 'check...';
-    $service->check_new_mail;
-    sleep( 30 );
-}
+warn Dumper $service->get_folders;
+#while (1) {
+#    warn 'check...';
+#    $service->check_new_mail;
+#    sleep( 30 );
+#}
 
 #my $folder = $folder_of->{ 0 };
 #my $mail_id = $folder->mail_id_list->[ $ARGV[0] ];

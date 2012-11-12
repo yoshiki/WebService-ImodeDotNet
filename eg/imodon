@@ -1,0 +1,46 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use WebService::ImodeDotNet;
+use Config::Pit;
+use Encode;
+use Data::Dumper;
+use Daemon::Generic;
+
+our $VERSION = 0.1;
+
+my $config = pit_get( 'imode.net', require => {
+    docomo_id => 'your_docomo_id',
+    password  => 'your_password',
+} );
+
+newdaemon(
+    progname => 'imodon',
+    configfile => $ENV{HOME} . '/.imodon',
+    pidfile => 'imodon.pid',
+);
+
+sub gd_preconfig {
+    my $self = shift;
+#    open(CONFIG, "<$self−>{configfile}") or die;
+#    while (<CONFIG>) {
+#        $sleeptime = $1 if /^sleeptime\s+(\d+)/;
+#    }
+#    close(CONFIG);
+}
+
+sub gd_run {
+    my $service = WebService::ImodeDotNet->new(
+        docomo_id => $config->{ docomo_id },
+        password  => $config->{ password },
+    );
+    $service->login;
+    while (1) {
+        warn 'check mail';
+        $service->check_new_mail;
+        sleep(600);
+    }
+}

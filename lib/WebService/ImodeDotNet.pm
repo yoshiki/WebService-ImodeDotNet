@@ -65,7 +65,7 @@ sub login {
         },
     );
     if ( !$self->mechanize->success ) {
-        Carp::croak('Login failed');
+        Carp::croak( 'Login failed' );
     } elsif ( $self->mechanize->content =~ '<title>認証エラー' ) {
         Carp::croak( 'Authorization error' );
     }
@@ -73,10 +73,11 @@ sub login {
     $self->mechanize->add_header_for_ajax;
     $self->mechanize->post( $JSON_LOGIN_URL );
     if ( !$self->mechanize->success ) {
-        Carp::croak( 'Login for ajax failed' );
+        Carp::croak( 'Login failed in ajax' );
     }
 
     $self->logged_in( YES );
+    warn "Login success";
 }
 
 sub get_folders {
@@ -91,13 +92,11 @@ sub get_folders {
 
     my $data = eval { JSON::Syck::Load( $self->mechanize->content ) };
     if ( $@ ) {
-        $self->logged_in( NO );
-        $self->login;
-        return $self->get_folders;
+        Carp::croak( 'Invalid json response' );
     }
 
     if ( $data->{ common }->{ result } ne 'PW1000' ) {
-        Carp::croak( 'Bad response' );
+        Carp::croak( 'Bad response: ' . $data->{ common }->{ result } );
     }
 
     my %folder_of;
@@ -108,10 +107,10 @@ sub get_folders {
     $self->folder_of( \%folder_of );
 
     # set last_mail_id when first load
-    warn $self->folder_of->{ 0 }->mail_id_list->[ 0 ];
     $self->last_mail_id( $self->folder_of->{ 0 }->mail_id_list->[ 0 ] )
         if $self->last_mail_id == -1;
 
+    warn "Got mail id list in all folders";
     return $self->folder_of;
 }
 
@@ -137,7 +136,7 @@ sub get_mail_detail {
     }
 
     if ( $data->{ common }->{ result } ne 'PW1000' ) {
-        Carp::croak( 'Bad response' );
+        Carp::croak( 'Bad response: ' . $data->{ common }->{ result } );
     }
 
     my $mail = WebService::ImodeDotNet::Mail->new(
@@ -146,6 +145,7 @@ sub get_mail_detail {
         data      => $data->{ data },
     );
 
+    warn 'Got mail detail';
     return $mail;
 }
 
@@ -170,6 +170,7 @@ sub check_new_mail {
     for my $mail_id ( @new_arrival_mail_ids ) {
         my $mail = $self->get_mail_detail( $folder->id, $mail_id );
         $self->send_mail( $mail );
+        warn 'Send mail to your mail';
     }
 }
 
